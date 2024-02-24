@@ -1,0 +1,185 @@
+---
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+rm(list = ls())
+
+library("tidyverse")
+library("janitor")
+library("coinmarketcapr")
+library("notionR")
+library("plotly")
+library("scales")
+
+# setup coinmarketcap api 
+# ?coinmarketcapr::setup
+coinmarketcapr::setup("c0ded540-cbfc-496d-971d-6d99ff2a8de0")
+# get_api_info()
+
+# setup notion api and add table 
+# dont forget to share integration with database page
+notion_secret = "secret_xBi8VPhrJHZOoLHgz7OVnHO4tJsAB40CVtsHPRbkZ33"
+notion_database = "b562ec907c1243498904a5139326a0a7"
+
+# pull existing notion data 
+notion_prices = getNotionDatabase(
+  notion_secret, notion_database) %>% 
+  janitor::clean_names() %>% 
+  filter(properties_my_tokens_number != 0) %>% 
+  rename(symbol = properties_token_title_plain_text,
+         my_tokens = properties_my_tokens_number) %>%
+  mutate(notion_id = str_replace_all(id, "-", ""),
+         my_tokens = as.numeric(my_tokens)) %>%
+  select(notion_id, symbol, my_tokens) 
+notion_prices
+
+# update this list to the tokens you want 
+crypto_symbols = c("BTC", "WBTC", "ETH", "WETH", "USDC", 
+                   "MATIC", "COW", "BETS", "CRV", "MANA", "MNT", 
+                   # polkadot and cosmos
+                   "AZERO", "DOT", "ATOM", "OSMO", "KUJI", "TIA", "AKT", "INJ", 
+                   # solana 
+                   "SOL", "CWAR", "UXD", "SBR", "SNS", "GUAC", "FIDA", "POLIS", 
+                   # data/infra/ai
+                   "GRT", "TAO", "AR", "FIL", "LINK", "ALGO") 
+
+# grab the prices and add them to a database (sorry its hacky)
+current_prices = get_crypto_quotes(currency = "USD",
+                                   symbol = crypto_symbols,
+                                   use.names=FALSE)
+first_step = map_df(current_prices$quote, ~as.data.frame(t(.))) %>% 
+  filter()
+second_step = round(as.data.frame(unlist(first_step[1])), 7)
+third_step = round(as.data.frame(unlist(first_step[10])), 2)
+second_step$usd_price = second_step$`unlist(first_step[1])`
+third_step$market_cap = third_step$`unlist(first_step[10])`
+current_prices = data.frame(symbol = (current_prices$symbol),
+                            usd_price = second_step$usd_price,
+                            market_cap = third_step$market_cap) %>% 
+  mutate(usd_price = if_else(symbol == "FAB", 0, usd_price))
+rm(first_step, second_step, third_step)
+
+# multiply the token prices by existing holdings 
+current_prices = current_prices %>% 
+  full_join(notion_prices, by = "symbol") %>% 
+  mutate(now_sum = (my_tokens * usd_price)) %>% 
+  select(notion_id, symbol, my_tokens, usd_price, now_sum, market_cap) %>% 
+  drop_na(notion_id) %>% 
+  mutate(future_sum = now_sum,
+         future_sum = if_else(symbol == "GRT", future_sum +
+                                (462500*usd_price), future_sum),
+         usd_price = replace_na(usd_price, 0),
+         now_sum = replace_na(now_sum, 0),
+         future_sum = replace_na(future_sum, 0)) %>% 
+  arrange(-now_sum) 
+
+# update the pricing table in notion 
+for (i in 1:nrow(current_prices)) { 
+  updateNumber(notion_secret, current_prices$notion_id[i], 
+              "MyTokens",  current_prices$my_tokens[i])
+  updateNumber(notion_secret, current_prices$notion_id[i], 
+              "TokenUSD",  current_prices$usd_price[i])
+  updateNumber(notion_secret, current_prices$notion_id[i], 
+              "NowSums",  current_prices$now_sum[i])
+  updateNumber(notion_secret, current_prices$notion_id[i], 
+              "End2023",  current_prices$future_sum[i])
+  updateNumber(notion_secret, current_prices$notion_id[i], 
+              "TokenMarketCap",  current_prices$market_cap[i])
+}
+
+# get the sum to update your monthlies 
+sum(current_prices$now_sum)
+```
+
+WIP 
+
+```{r, fig.height=3, fig.width=9}
+savings = data.frame(
+  month = c("Dec 2022", "Jan 2023", "Feb 2023", "Mar 2023", "Apr 2023", "May 2023",
+            "Jun 2023", "Jul 2023", "Aug 2023", "Sep 2023", "Oct 2023", "Nov 2023",
+            "Dec 2023", "Jan 2024", "Feb 2024"),
+  total_saved = c(102027.34, 112375.20, 134328.74, 143012.82, 154560.79, 166852.05,
+                  170235.57, 178156.54, 182545.65, 187020.51, 250084.10, 299494.10,
+                  378836.80, 386808.01, 499436.83),
+  crypto = c(18883.86,  18883.86,  26203.82,  26203.82, 35009.20, 35547.53, 
+             33695.33,  33452.16,  38221.03,  37824.61, 102028.50, 127217.00,
+             167847.40, 173095.20, sum(current_prices$now_sum)),
+  order = c(1:15)
+) %>% mutate(month = fct_reorder(month, order),
+             noncrypto = (total_saved-crypto)) %>%
+  select(month, total_saved, noncrypto, crypto)
+savings
+
+savings_chart = savings %>% 
+  pivot_longer(cols = total_saved:crypto, 
+               names_to = "type",
+               values_to = "amount") %>% 
+  left_join(savings %>% select(month, total_saved), by = "month") %>% 
+  mutate(percentage = round(amount/total_saved,2)*100) %>% 
+  select(month, type, amount, percentage) %>% 
+  ggplot(aes(x=month, y=amount, group=type, colour=type,
+             text=paste('Month:', month, 
+                        '<br>Amount: $', format(amount, nsmall=0, big.mark=","),
+                        '<br>Percentage: ', percentage, "%")))  +
+  geom_line()+
+  geom_point() +
+  theme_minimal() +
+  theme(plot.title = element_text(size=14, face="bold", hjust=0.48),
+        axis.title.x = element_blank(),
+        axis.text.x = element_text(size=8, angle = 35, vjust = 0.5, hjust=1),
+        legend.title = element_blank()) +
+  labs(title="Amount Saved Over Time", y = "Amount Saved") +
+  scale_y_continuous(labels = comma) +
+  scale_color_manual(labels=c("Crypto", "Fiat", "Total"), 
+                     values=c("#FF4C00", "#CE003A", "#141D4B")) 
+ggplotly(savings_chart, tooltip = c("text")) %>%
+  style(showlegend = FALSE)
+```
+
+
+```{r}
+
+# subgraph that grabs total indexing rewards from braindexer on ethereum
+# subgraph that grabs total indexing rewards from braindexer on ethereum
+# subgraph that grabs unrealized rewards for skinner, erdos, graphlet
+
+braindexer_ethereum_rewards * 0.015
+braindexer_arbitrum_rewards * 0.057
+
+
+```
+
+
+References 
+
+https://cran.r-project.org/web/packages/coinmarketcapr/coinmarketcapr.pdf
+
+```{r}
+financials_database = "65dec3e713ac4d6db098d28c6bc5e89d"
+financials_database = getNotionDatabase(
+  notion_secret, financials_database) %>% 
+  janitor::clean_names() %>% 
+  rename(month = properties_month_title_text_content,
+         date_start = properties_updated_date_start, 
+         total = properties_total_formula_number,
+         crypto = properties_crypto_number,
+         liquid = properties_liquid_formula_number) %>% 
+  select(month, total, crypto, liquid, date_start)
+```
+
+```{r}
+summaries_database = "0d0cadea82244537b09a1091c56fa341"
+summaries_database = getNotionDatabase(
+  notion_secret, summaries_database) %>% 
+  janitor::clean_names() %>% 
+  rename(notion_id = id, 
+         entry = properties_entry_name_title_text_content,
+         amount = properties_usd_value_number,
+         monthly_id = properties_bk_monthly_relation_id) %>% # still not done getting all relations
+  select(notion_id, entry, amount, monthly_id)
+```
+
+
+

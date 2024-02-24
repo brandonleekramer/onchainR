@@ -1,0 +1,209 @@
+---
+title: "Untitled"
+author: "BK"
+date: "2023-12-31"
+output: html_document
+---
+
+```{r}
+# https://r-pkgs.org/whole-game.html
+
+https://tezostaquito.io/docs/rpc_package/
+
+rm(list = ls())
+
+library("devtools")
+
+load_all()
+document()
+check()
+install()
+use_package("tidyweb3")
+use_testthat()
+
+
+library("tidyweb3")
+
+
+vitalik_eth = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+grove_url = "https://eth-mainnet.rpc.grove.city/v1/"
+grove_api_key = "fadc98f8"
+
+eth_get_balance(vitalik_eth, grove_url, grove_api_key)
+get_eth_code(vitalik_eth, grove_url, grove_api_key)
+```
+
+
+```{r setup, include=FALSE}
+library("tidyverse")
+library("janitor")
+library("here")
+library("httr2")
+
+# alchemy
+alchemy_url = "https://eth-mainnet.g.alchemy.com/v2/"
+alchemy_api_key = 'Jia3gAWV6msxUS1LbcwcNmpNlXpNiz3h'
+# infura 
+infura_url = "https://mainnet.infura.io/v3/"
+infura_api_key = '04f25f82de3840e1afd524b62d6767c5'
+# quicknode required credit card
+grove_url = "https://eth-mainnet.rpc.grove.city/v1/"
+grove_api_key = "fadc98f8"
+
+```
+
+```{r finanlized}
+source(str_c(here("src"),"/json-rpc.R"))
+
+eth_get_balance2 = function(wallet, provider_url, api_key){
+  request_output = request(str_c(provider_url, api_key)) %>%
+    req_headers('accept' = "application/json",
+                'content-type' = "application/json") %>%
+    req_body_raw(str_c('{"id": 1,"jsonrpc": "2.0", "method": "eth_getBalance",
+                 "params": ["',wallet,'", "latest"]}')) %>%
+    req_perform() %>%
+    resp_body_json()
+  request_output = as.numeric(request_output$result)/(10^18)
+  request_output
+}
+
+eth_get_balance2(bkramer_eth, grove_url, grove_api_key)
+
+# set parameters
+test_url = grove_url
+test_api_key = grove_api_key
+bkramer_eth = "0x4deb12354ea92958fa11fC8c124A9F12B61B8Ab4"
+brandonkramer_eth = "0xD4689dF10d248FDDC4C16fb6Aa1cD30585aAdB0C"
+
+# requires wallet
+eth_get_balance(brandonkramer_eth, test_url, test_api_key)
+eth_get_transaction_count(brandonkramer_eth, alchemy_url, alchemy_api_key)
+eth_get_code(brandonkramer_eth, test_url, test_api_key)
+eth_get_storage_at(brandonkramer_eth, test_url, test_api_key)
+# no wallet required
+eth_block_number(test_url, test_api_key)
+eth_chain_id(test_url, test_api_key)
+eth_gas_price(test_url, test_api_key)
+eth_accounts(test_url, test_api_key)
+net_listening(test_url, test_api_key)
+net_version(test_url, test_api_key)
+eth_protocol_version(test_url, test_api_key)
+web3_client_version(test_url, test_api_key)
+web3_sha3("0x68656c6c6f20776f726c64", test_url, test_api_key)
+```
+
+
+```{r}
+source(str_c(here("src"),"/json-rpc.R"))
+
+bkramer_eth = "0x4deb12354ea92958fa11fC8c124A9F12B61B8Ab4"
+brandonkramer_eth = "0xD4689dF10d248FDDC4C16fb6Aa1cD30585aAdB0C"
+alchemy_url = "https://eth-mainnet.g.alchemy.com/v2/"
+alchemy_api_key = 'Jia3gAWV6msxUS1LbcwcNmpNlXpNiz3h'
+my_tx_hash = "0x7b8f5831ba63762b9e3aa7b3d93902485897419063c0d84acc6594bd7ec64069"
+
+chk = eth_get_block_by_hash(
+  block_hash = "0x3f07a9c83155594c000642e7d60e8a8a00038d03e9849171a05ed0e2d47acbb3", 
+  alchemy_url, alchemy_api_key)
+chk
+
+my_block_hash = "0x3f07a9c83155594c000642e7d60e8a8a00038d03e9849171a05ed0e2d47acbb3"
+
+request_output = request(str_c(alchemy_url, alchemy_api_key)) %>% 
+    req_headers('accept' = "application/json",
+                'content-type' = "application/json") %>%
+    req_body_raw(str_c('{"id": 1, "jsonrpc": "2.0", "method": "eth_getBlockByHash",
+                         "params": ["',my_block_hash,'", false]}')) %>% 
+    req_perform() %>%
+    resp_body_json()
+
+request_output_df = data.frame(
+    transaction_hash = my_block_hash, #done
+    block_number = as.numeric(request_output$result$number), #done
+    block_hash = request_output$result$hash, #done
+    #block_transactions = as.list(request_output$result$transactions), # not done
+    difficulty = request_output$result$difficulty, 
+    extra_data = request_output$result$extraData,
+    gas_limit = request_output$result$gasLimit, 
+    gas_used = request_output$result$gasUsed, 
+    logs_bloom = request_output$result$logsBloom,
+    miner = request_output$result$miner,
+    mix_hash = request_output$result$mixHash,
+    nonce = request_output$result$nonce,
+    parent_hash = request_output$result$parentHash, 
+    receipts_root = request_output$result$receiptsRoot, 
+    sha3_uncles = request_output$result$sha3Uncles, 
+    size = request_output$result$size, 
+    state_root = request_output$result$stateRoot, 
+    timestamp = request_output$result$timestamp,
+    total_difficulty = request_output$result$totalDifficulty,
+    transaction_root = request_output$result$transactionsRoot, 
+    #uncles = request_output$result$uncles,
+    base_fee_per_gas = request_output$result$baseFeePerGas,
+    withdrawals_root = request_output$result$withdrawalsRoot#, 
+    #withdrawals = request_output$result$withdrawals
+  ); request_output_df
+
+
+  
+
+transactions_list = do.call(
+  rbind.data.frame, request_output$result$transactions)
+names(transactions_list) = "transactions_list"
+
+withdrawals_list = do.call(
+  rbind.data.frame, request_output$result$withdrawals)
+names(withdrawals_list) = "withdrawals_list"
+
+uncles_list = do.call(
+  rbind.data.frame, request_output$result$uncles)
+names(uncles_list) = "uncles_list"
+
+test_output_df = merge(
+  test_output_df, transaction_list) %>% 
+  group_by(transaction_hash) %>% nest()
+
+test_output_df$data
+
+
+request_output_df
+```
+
+
+
+
+
+
+
+
+```{r}
+source(str_c(here("src"),"/json-rpc.R"))
+source(str_c(here("src"),"/json-rpc-gas.R"))
+
+bkramer_eth = "0x4deb12354ea92958fa11fC8c124A9F12B61B8Ab4"
+brandonkramer_eth = "0xD4689dF10d248FDDC4C16fb6Aa1cD30585aAdB0C"
+alchemy_url = "https://eth-mainnet.g.alchemy.com/v2/"
+alchemy_api_key = 'Jia3gAWV6msxUS1LbcwcNmpNlXpNiz3h'
+
+eth_estimate_gas(from = bkramer_eth, 
+                 to = brandonkramer_eth, 
+                 alchemy_url, alchemy_api_key)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

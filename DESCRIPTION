@@ -1,0 +1,21 @@
+Package: onchainR
+Title: Get blockchain data using R and tidyverse
+Version: 0.0.0.9000
+Authors@R: 
+    person("Brandon", "Kramer", , "brandonleekramer@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-3233-5310"))
+Maintainer: Brandon Kramer <brandonleekramer@gmail.com>
+Description: The onchainR package helps users get blockchain (or web3) data using JSON-RPC APIs and subgraphs in R. 
+License: MIT + file LICENSE
+Encoding: UTF-8
+URL: https://github.com/brandonleekramer/onchainR/
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: 
+    magrittr,
+    stringr,
+    httr2,
+    onchainR
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
