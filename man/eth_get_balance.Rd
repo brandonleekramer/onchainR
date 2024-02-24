@@ -2,28 +2,31 @@
 % Please edit documentation in R/eth_get_balance.R
 \name{eth_get_balance}
 \alias{eth_get_balance}
-\title{Get an Ethereum wallet balance}
+\title{Get the balance of the specified address in eth, wei, or hexidecimal format}
 \usage{
-eth_get_balance(wallet_address, provider_url, api_key)
+eth_get_balance(wallet_address, provider_url, api_key, return_format)
 }
 \arguments{
 \item{wallet_address}{An Ethereum wallet balance (ENS domains not supported).}
 
-\item{provider_url}{The URL of a JSON-RPC provider such as Pocket Network, Grove, or Infura.}
+\item{provider_url}{The URL of a JSON-RPC provider such as Pocket Network, Infura, or Alchemy.}
 
 \item{api_key}{The API key of the JSON-RPC provider.}
+
+\item{return_format}{Returns the balance of wallet in "eth", "wei", or "hexidecimal" format}
 }
 \value{
 A numeric value of an Ethereum balance.
 }
 \description{
-Get an Ethereum wallet balance
+Get the balance of the specified address in eth, wei, or hexidecimal format
 }
 \examples{
 vitalik_eth = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
 my_provider_url = "https://eth-mainnet.rpc.grove.city/v1/"
-my_api_key = "fadc98f89"
+my_api_key = "fadc98f8"
+return_format = "ETH"
 
-eth_get_balance(vitalik_eth, my_provider_url, my_api_key)
+eth_get_balance(vitalik_eth, my_provider_url, my_api_key, return_format)
 
 }

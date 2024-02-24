@@ -14,8 +14,7 @@ RoxygenNote: 7.2.3
 Imports: 
     magrittr,
     stringr,
-    httr2,
-    onchainR
+    httr2
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
