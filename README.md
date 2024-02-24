@@ -1,8 +1,8 @@
 
-# onchainR <br><img src="man/figures/onchainR.png" align="right" height="210" />
+# onchainR <br><img src="man/figures/onchainR.png" align="right" height="200" />
 
 <!-- badges: start 
-[![R-CMD-check](https://github.com/brandonleekramer/onchainR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tidyverse/ggplot2/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/brandonleekramer/onchainR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/brandonleekramer/onchainR/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/brandonleekramer/onchainR/branch/main/graph/badge.svg)](https://app.codecov.io/gh/brandonleekramer/tidyweb3?branch=main)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/onchainR)](https://cran.r-project.org/package=ggplot2)
 badges: end -->
@@ -29,7 +29,7 @@ devtools::install_github("brandonleekramer/onchainR")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(tidyweb3)
+library(onchainR)
 
 vitalik_eth = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
 my_prc_provider = "https://eth-mainnet.rpc.grove.city/v1/"
