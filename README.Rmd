@@ -40,7 +40,7 @@ devtools::install_github("brandonleekramer/onchainR")
 This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
-library(onchainR)
+library(onchainR) 
 
 vitalik_eth = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
 my_prc_provider = "https://eth-mainnet.rpc.grove.city/v1/"
