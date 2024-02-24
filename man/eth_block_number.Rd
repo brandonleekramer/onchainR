@@ -12,7 +12,7 @@ eth_block_number(provider_url, api_key)
 \item{api_key}{The API key of the JSON-RPC provider.}
 }
 \value{
-A numeric value of an Ethereum balance.
+Returns the latest block number of the blockchain.
 }
 \description{
 Returns the latest block number of the blockchain.

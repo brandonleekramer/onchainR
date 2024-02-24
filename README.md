@@ -7,7 +7,7 @@
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/onchainR)](https://cran.r-project.org/package=ggplot2)
 badges: end -->
 
-onchainR is a package for accessing blockchain and web3 data in R
+`onchainR` is a package for accessing blockchain and web3 data in R
 
 **Authors:** [Brandon Kramer](https://www.brandonleekramer.com/) \|
 **License:** [MIT](https://opensource.org/licenses/MIT)<br/>
@@ -36,3 +36,7 @@ my_api_key = grove_api_key
 eth_get_balance(vitalik_eth, my_rpc_provider, grove_api_key, "ETH")
 #> [1] 1085.514
 ```
+
+## Functions, Chains, and Providers
+
+<br><img src="man/figures/supported-functions.png" align="center" width=100% />

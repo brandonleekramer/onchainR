@@ -47,6 +47,8 @@ my_api_key = grove_api_key
 eth_get_balance(vitalik_eth, my_rpc_provider, grove_api_key, "ETH")
 ```
 
+## Functions, Chains, and Providers
 
+<br><img src="man/figures/supported-functions.png" align="center" width=100% />
 
 
