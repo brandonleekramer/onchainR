@@ -10,9 +10,9 @@
 #' my_provider_url = "https://mainnet.infura.io/v3/"
 #' my_api_key = "04f25f82de3840e1afd524b62d6767c5"
 #'
-#' eth_block_number(my_provider_url, my_api_key)
+#' eth_blockNumber(my_provider_url, my_api_key)
 #'
-eth_block_number = function(provider_url, api_key){
+eth_blockNumber = function(provider_url, api_key){
   request_output = httr2::request(
     stringr::str_c(provider_url, api_key)) %>% 
     httr2::req_headers('accept' = "application/json",

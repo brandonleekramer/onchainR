@@ -10,7 +10,7 @@
 #' my_provider_url = "https://mainnet.infura.io/v3/"
 #' my_api_key = "04f25f82de3840e1afd524b62d6767c5"
 #' 
-#' balance_as_hex = eth_get_balance(vitalik_eth, my_provider_url, my_api_key, "hexidecimal")
+#' balance_as_hex = eth_getBalance(vitalik_eth, my_provider_url, my_api_key, "hexidecimal")
 #' 
 #' balance_as_eth = hex_to_eth(balance_as_hex)
 #' balance_as_eth

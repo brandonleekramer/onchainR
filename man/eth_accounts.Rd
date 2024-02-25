@@ -20,8 +20,8 @@ Returns an array of addresses owned by the client. Note that most providers
 do not store private keys, so this will often return an empty response.
 }
 \examples{
-my_provider_url = "https://eth-mainnet.rpc.grove.city/v1/"
-my_api_key = "fadc98f89"
+my_provider_url = "https://mainnet.infura.io/v3/"
+my_api_key = "04f25f82de3840e1afd524b62d6767c5"
 
 eth_accounts(my_provider_url, my_api_key)
 

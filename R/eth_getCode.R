@@ -12,9 +12,9 @@
 #' my_provider_url = "https://mainnet.infura.io/v3/"
 #' my_api_key = "04f25f82de3840e1afd524b62d6767c5"
 #'
-#' eth_get_code(vitalik_eth, my_provider_url, my_api_key)
+#' eth_getCode(vitalik_eth, my_provider_url, my_api_key)
 #'
-eth_get_code = function(wallet_address, provider_url, api_key){
+eth_getCode = function(wallet_address, provider_url, api_key){
   request_output = httr2::request(
     stringr::str_c(provider_url, api_key)) %>%
     httr2::req_headers('accept' = "application/json",
