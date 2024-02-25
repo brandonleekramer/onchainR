@@ -39,4 +39,7 @@ eth_get_balance(vitalik_eth, my_rpc_provider, grove_api_key, "ETH")
 
 ## Functions, Chains, and Providers
 
+Below provides a list of functions that draw on the blockchain methods
+for select chains and providers.
+
 <br><img src="man/figures/supported-functions.png" align="center" width=100% />
