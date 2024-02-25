@@ -1,5 +1,5 @@
 ---
-output: github_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -9,6 +9,9 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-"
 )
 source("~/Documents/git/secrets.R")
+library("tidyverse") 
+library("notionR") 
+library("DT")
 ```
 
 ## onchainR <br><img src="man/figures/onchainR.png" align="right" height="210" />
@@ -44,13 +47,58 @@ vitalik_eth = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
 my_rpc_provider = "https://eth-mainnet.rpc.grove.city/v1/"
 my_api_key = grove_api_key
 
-eth_get_balance(vitalik_eth, my_rpc_provider, grove_api_key, "ETH")
+eth_getBalance(vitalik_eth, my_rpc_provider, grove_api_key, "ETH")
 ```
 
 ## Functions, Chains, and Providers
 
 Below provides a list of functions that draw on the blockchain methods for select chains and providers.
 
-<br><img src="man/figures/supported-functions.png" align="center" width=100% />
+```{r echo=FALSE}
+# <br><img src="man/figures/supported-functions.png" align="center" width=100% />
+supported_functions = getNotionDatabase(overlap_secret, "c0cb010e0bdf4012a880ab38af501f44") %>% 
+  janitor::clean_names() %>% 
+  rename(level = properties_level_select_name, 
+         method = properties_method_function_title_text_content,
+         description = properties_description_rich_text_text_content,
+         chains = properties_chains_relation_relation_id, 
+         providers = properties_providers_relation_relation_id,
+         notion_id = id, 
+         parent_id = properties_api_categories_relation_id) %>% 
+  mutate(method = str_replace_all(method, " \\| ", ""),
+         chains = str_replace_all(chains, "bbba645a-a682-42c5-8728-8cdf9b3d0190", "Ethereum"),
+         description = replace_na(description, ""),
+         providers = str_replace_all(providers, "-", ""),
+         providers = str_replace_all(providers, "313b42e0a58d48f5b763238bbcffd2a4", "Infura"),
+         providers = str_replace_all(providers, "b3edcc1eac9f4bcfb4e90603298ecb6b", "Grove"),
+         providers = str_replace_all(providers, "e60618ace28746c081e6ab95f5db6576", "DRPC"),
+         providers = str_replace_all(providers, "88d12be850e84be397f93b89156088c4", "Quicknode"),
+         providers = str_replace_all(providers, "1dee9d88956243d19cf683be3d64a4bf", "Alchemy"),
+         providers = str_replace_all(providers, "5e6e7bd1456b440d91d581e4e184318b", "Metamask"),
+         providers = replace_na(providers, "")) %>% 
+  select(level, method, description, chains, providers, notion_id, parent_id) %>% 
+  filter(level %in% c("API", "Class")) %>% 
+  arrange(level)
 
+apis = supported_functions %>% 
+  filter(level == "API") %>% 
+  select(method, notion_id) %>% 
+  rename(api_type = method,
+         parent_id = notion_id)
+  
+classes = supported_functions %>% 
+  filter(level == "Class") %>% 
+  select(-notion_id)
+  
+methods = apis %>% 
+  left_join(classes, by = c("parent_id")) %>% 
+  select(#api_type, 
+         method, description, chains, providers) %>% 
+  filter(!is.na(method)) %>% 
+  arrange(#api_type, 
+          method)
 
+datatable(methods, caption = "onchainR Supported Functions, Chains, and Providers", 
+          rownames = FALSE) %>% 
+  formatStyle(columns = c("method"), fontWeight = 'bold')
+```
