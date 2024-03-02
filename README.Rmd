@@ -1,5 +1,5 @@
 ---
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -33,7 +33,7 @@ You can install the development version of onchainR from [GitHub](https://github
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("brandonleekramer/onchainR")
+# devtools::install_github("brandonleekramer/onchainR")
 ```
 
 ## Example
