@@ -22,7 +22,7 @@ library("DT")
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/onchainR)](https://cran.r-project.org/package=ggplot2)
 badges: end -->
 
-`onchainR` is a package for accessing blockchain and web3 data in R
+`onchainR` is a package for querying blockchain and web3 data in R
 
 **Authors:** [Brandon Kramer](https://www.brandonleekramer.com/) | 
 **License:** [MIT](https://opensource.org/licenses/MIT)<br/>
@@ -36,69 +36,53 @@ You can install the development version of onchainR from [GitHub](https://github
 # devtools::install_github("brandonleekramer/onchainR")
 ```
 
-## Example
+## JSON-RPC Example
 
-This is a basic example which shows you how to solve a common problem:
+**JSON-RPC:** JSON-RPC APIs are the easiest way to get read data off of a blockchain. These APIs get basic account, balance, and network data. You can learn more about [blockchain JSON-RPC nodes here](https://www.alchemy.com/overviews/rpc-node).<br>
+**Example:** In this example, we check how much `vitalik.eth` has in their wallet using the `eth_getBalance` function.<br>
+**Process:** To do this, you will need to pick a JSON-RPC provider. `onchainR` currently supports [Infura](https://www.infura.io/), [Grove](https://grove.city/), [DRPC](https://drpc.org/), [Quicknode](https://www.quicknode.com/), and [Alchemy](https://www.alchemy.com/), but these functions likely work with dozens of other JSON-RPC providers too. We've tried to design these functions to minimize vendor lock-in. Once you have picked a provider, you'll need to copy an endpoint and API key from within your account.<br>
 
-```{r example}
+```{r json_rpc}
 library("onchainR") 
 
 vitalik_eth = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
-my_rpc_provider = "https://eth-mainnet.rpc.grove.city/v1/"
-my_api_key = grove_api_key
+my_rpc_provider = "https://mainnet.infura.io/v3/"
+my_api_key = infura_api_key
 
-eth_getBalance(vitalik_eth, my_rpc_provider, grove_api_key, "ETH")
+eth_getBalance(wallet_address = vitalik_eth, 
+               provider_url = my_rpc_provider, 
+               api_key = my_api_key, 
+               return_format = "ETH")
+```
+
+## Subgraph Example
+
+**Subgraphs:** Subgraphs allow users to query data on smart contracts using GraphQL. For example, to query all transactions within a single Uniswap v3 liquidity pool over the last 24 hours, Uniswap simply needs to define their schema, index the event data to create the subgraph, and then use the generated GraphQL API to query their subgraph for flexible and efficient blockchain data. With [The Graph](https://thegraph.com/), subgraphs can also be published onchain so *anyone* can use them! Several other blockchain data providers, including Alchemy and Goldsky, allow you to create your own subgraphs. We opted to develop wrapper functions for The Graph specifically because that protocol provides the largest open repository of existing subgraphs to query onchain projects.<br>
+**Example:** In this example, we use the [Uniswap V3 subgraph](https://thegraph.com/explorer/subgraphs/5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV?v=0&view=Playground&chain=arbitrum-one) on The Graph Network. To search for subgraphs that index other smart contracts, use [Graph Explorer](https://thegraph.com/explorer). [The Graph also has a free hosted service](https://thegraph.com/hosted-service), but it is set to retire in Q2 2024.<br> 
+**Process:** We develop a GraphQL query under the `Playground` tab, copy the `Subgraph ID` from the top of the page, and copy both into our R code. Next, we go to [Subgraph Studio](https://thegraph.com/studio/apikeys/) to get an API key. Note that this subgraph is deployed on The Graph on Arbitrum, which you check by validating the Network Switcher in the top-right corner of the page.<br>  
+
+```{r subgraph}
+uniswap_query = "{ bundles(first: 5) { id ethPriceUSD } }"
+uniswapv3_subgraph = "5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV"
+my_api_key = graph_api_key
+
+query_subgraph(graphql_query = uniswap_query,
+               subgraph_id = uniswapv3_subgraph,
+               api_key = my_api_key,
+               deployment_network = "arbitrum")
 ```
 
 ## Functions, Chains, and Providers
 
 Below provides a list of functions that draw on the blockchain methods for select chains and providers.
 
-```{r echo=FALSE}
-# <br><img src="man/figures/supported-functions.png" align="center" width=100% />
-supported_functions = getNotionDatabase(overlap_secret, "c0cb010e0bdf4012a880ab38af501f44") %>% 
-  janitor::clean_names() %>% 
-  rename(level = properties_level_select_name, 
-         method = properties_method_function_title_text_content,
-         description = properties_description_rich_text_text_content,
-         chains = properties_chains_relation_relation_id, 
-         providers = properties_providers_relation_relation_id,
-         notion_id = id, 
-         parent_id = properties_api_categories_relation_id) %>% 
-  mutate(method = str_replace_all(method, " \\| ", ""),
-         chains = str_replace_all(chains, "bbba645a-a682-42c5-8728-8cdf9b3d0190", "Ethereum"),
-         description = replace_na(description, ""),
-         providers = str_replace_all(providers, "-", ""),
-         providers = str_replace_all(providers, "313b42e0a58d48f5b763238bbcffd2a4", "Infura"),
-         providers = str_replace_all(providers, "b3edcc1eac9f4bcfb4e90603298ecb6b", "Grove"),
-         providers = str_replace_all(providers, "e60618ace28746c081e6ab95f5db6576", "DRPC"),
-         providers = str_replace_all(providers, "88d12be850e84be397f93b89156088c4", "Quicknode"),
-         providers = str_replace_all(providers, "1dee9d88956243d19cf683be3d64a4bf", "Alchemy"),
-         providers = str_replace_all(providers, "5e6e7bd1456b440d91d581e4e184318b", "Metamask"),
-         providers = replace_na(providers, "")) %>% 
-  select(level, method, description, chains, providers, notion_id, parent_id) %>% 
-  filter(level %in% c("API", "Class")) %>% 
-  arrange(level)
+<img src="man/figures/supported-functions.png" align="center" width=100% />
 
-apis = supported_functions %>% 
-  filter(level == "API") %>% 
-  select(method, notion_id) %>% 
-  rename(api_type = method,
-         parent_id = notion_id)
-  
-classes = supported_functions %>% 
-  filter(level == "Class") %>% 
-  select(-notion_id)
-  
-methods = apis %>% 
-  left_join(classes, by = c("parent_id")) %>% 
-  select(#api_type, 
-         method, description, chains, providers) %>% 
-  filter(!is.na(method)) %>% 
-  arrange(#api_type, 
-          method)
+## Additional Packages
 
-datatable(methods, caption = "onchainR Supported Functions, Chains, and Providers", 
-          rownames = FALSE) %>% 
-  formatStyle(columns = c("method"), fontWeight = 'bold')
-```
+For those interested in other blockchain data APIs in R, please see other projects below: 
+
+[`coinmarketcapr`](https://github.com/amrrs/coinmarketcapr) was designed to help R developers and data scientists to extract and monitor price and market cap of various cryptocurrencies from CoinMarketCap by getting their price, 24h trade volume, market cap and much more in USD and other currencies. 
+
+[`etherscanr`](https://github.com/dirkschumacher/etherscanr/tree/master) is an open archive package that offers an easy way to use the etherscan.io API to query information about the Ethereum network.  
+

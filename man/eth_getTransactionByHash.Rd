@@ -4,10 +4,10 @@
 \alias{eth_getTransactionByHash}
 \title{Returns the information about a transaction from a transaction hash.}
 \usage{
-eth_getTransactionByHash(block_hash, provider_url, api_key)
+eth_getTransactionByHash(transaction_hash, provider_url, api_key)
 }
 \arguments{
-\item{block_hash}{A transaction hash}
+\item{transaction_hash}{A transaction hash}
 
 \item{provider_url}{The URL of a JSON-RPC provider such as Grove, DRPC, Quicknode, Infura, Alchemy.}
 
@@ -22,8 +22,8 @@ Returns the information about a transaction from a transaction hash.
 \examples{
 my_provider_url = "https://mainnet.infura.io/v3/"
 my_api_key = "04f25f82de3840e1afd524b62d6767c5"
-my_block_hash = "0xb1fac2cb5074a4eda8296faebe3b5a3c10b48947dd9a738b2fdf859be0e1fbaf"
+my_transaction_hash = "0xb1fac2cb5074a4eda8296faebe3b5a3c10b48947dd9a738b2fdf859be0e1fbaf"
 
-eth_getTransactionByHash(my_block_hash, my_provider_url, my_api_key)
+eth_getTransactionByHash(my_transaction_hash, my_provider_url, my_api_key)
 
 }
