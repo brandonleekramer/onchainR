@@ -76,7 +76,10 @@ query_subgraph(graphql_query = uniswap_query,
 
 Below provides a list of functions that draw on the blockchain methods for select chains and providers.
 
-<img src="man/figures/supported-functions.png" align="center" width=100% />
+<img src="man/figures/onchainR-01.png" align="center" width=100% />
+<img src="man/figures/onchainR-02.png" align="center" width=100% />
+<img src="man/figures/onchainR-03.png" align="center" width=100% />
+<img src="man/figures/onchainR-04.png" align="center" width=100% />
 
 ## Additional Packages
 

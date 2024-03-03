@@ -91,7 +91,7 @@ query_subgraph(graphql_query = uniswap_query,
                deployment_network = "arbitrum")
 #> $bundles
 #>   id                         ethPriceUSD
-#> 1  1 3428.655891577764808931188127758795
+#> 1  1 3472.350372672612471091816199106271
 ```
 
 ## Functions, Chains, and Providers
@@ -99,16 +99,22 @@ query_subgraph(graphql_query = uniswap_query,
 Below provides a list of functions that draw on the blockchain methods
 for select chains and providers.
 
-<img src="man/figures/supported-functions.png" align="center" width=100% />
+<img src="man/figures/onchainR-01.png" align="center" width=100% />
+<img src="man/figures/onchainR-02.png" align="center" width=100% />
+<img src="man/figures/onchainR-03.png" align="center" width=100% />
+<img src="man/figures/onchainR-04.png" align="center" width=100% />
 
 ## Additional Packages
 
 For those interested in other blockchain data APIs in R, please see
 other projects below:
 
-`coinmarketcapr`:
 [`coinmarketcapr`](https://github.com/amrrs/coinmarketcapr) was designed
 to help R developers and data scientists to extract and monitor price
 and market cap of various cryptocurrencies from CoinMarketCap by getting
 their price, 24h trade volume, market cap and much more in USD and other
 currencies.
+
+[`etherscanr`](https://github.com/dirkschumacher/etherscanr/tree/master)
+is an open archive package that offers an easy way to use the
+etherscan.io API to query information about the Ethereum network.
