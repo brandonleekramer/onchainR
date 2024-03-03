@@ -16,8 +16,10 @@
 #'                api_key = "3a2f2d6ce1672801c3a044139373a287", 
 #'                deployment_network = "arbitrum")
 #' 
-query_subgraph = function(graphql_query, subgraph_id, api_key, 
-                          deployment_network = c("arbitrum", "ethereum")){
+query_subgraph = function(graphql_query, 
+                          subgraph_id, 
+                          api_key, 
+                          deployment_network){
   
   if (deployment_network == "ethereum") {                       
   graphql_conn <- ghql::GraphqlClient$new(

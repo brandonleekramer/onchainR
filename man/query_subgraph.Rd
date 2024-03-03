@@ -4,12 +4,7 @@
 \alias{query_subgraph}
 \title{Returns subgraph data from an indexed smart contract on The Graph Network. Use \code{query_hosted_subgraph()} to query The Graph's hosted service.}
 \usage{
-query_subgraph(
-  graphql_query,
-  subgraph_id,
-  api_key,
-  deployment_network = c("arbitrum", "ethereum")
-)
+query_subgraph(graphql_query, subgraph_id, api_key, deployment_network)
 }
 \arguments{
 \item{graphql_query}{A GraphQL query of a subgraph.}
