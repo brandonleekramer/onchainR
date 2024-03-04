@@ -87,5 +87,5 @@ For those interested in other blockchain data APIs in R, please see other projec
 
 [`coinmarketcapr`](https://github.com/amrrs/coinmarketcapr) was designed to help R developers and data scientists to extract and monitor price and market cap of various cryptocurrencies from CoinMarketCap by getting their price, 24h trade volume, market cap and much more in USD and other currencies. 
 
-[`etherscanr`](https://github.com/dirkschumacher/etherscanr/tree/master) is an open archive package that offers an easy way to use the etherscan.io API to query information about the Ethereum network.  
+[`etherscanr`](https://github.com/dirkschumacher/etherscanr/) is an open archive package that offers an easy way to use the etherscan.io API to query information about the Ethereum network.  
 
