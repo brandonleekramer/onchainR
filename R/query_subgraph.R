@@ -25,7 +25,8 @@ query_subgraph = function(graphql_query,
   graphql_conn <- ghql::GraphqlClient$new(
     url = stringr::str_c("https://gateway.network.thegraph.com/api/subgraphs/id/", subgraph_id), 
     headers = list(Authorization = paste0("Bearer ", api_key)))
-  } else if (deployment_network == "arbitrum") {
+  } 
+  if (deployment_network == "arbitrum") {
     graphql_conn <- ghql::GraphqlClient$new(
       url = stringr::str_c("https://gateway-arbitrum.network.thegraph.com/api/subgraphs/id/", subgraph_id), 
       headers = list(Authorization = paste0("Bearer ", api_key)))
