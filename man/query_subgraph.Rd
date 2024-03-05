@@ -4,7 +4,7 @@
 \alias{query_subgraph}
 \title{Returns subgraph data from an indexed smart contract on The Graph Network. Use \code{query_hosted_subgraph()} to query The Graph's hosted service.}
 \usage{
-query_subgraph(graphql_query, subgraph_id, api_key, deployment_network)
+query_subgraph(graphql_query, subgraph_id, api_key)
 }
 \arguments{
 \item{graphql_query}{A GraphQL query of a subgraph.}
@@ -12,8 +12,6 @@ query_subgraph(graphql_query, subgraph_id, api_key, deployment_network)
 \item{subgraph_id}{Subgraph ID (found near top of subgraph page on Graph Explorer)}
 
 \item{api_key}{An API key from Subgraph Studio.}
-
-\item{deployment_network}{Network that subgraph was deployed/published on: "arbitrum" or "ethereum"}
 }
 \value{
 Returns subgraph data from an indexed smart contract.
@@ -24,9 +22,8 @@ Returns subgraph data from an indexed smart contract on The Graph Network. Use \
 \examples{
 uniswap_query = "{factories(first: 5){ id poolCount txCount totalVolumeUSD }}"
 
-query_subgraph(uniswap_query, 
+query_subgraph(graphql_query = uniswap_query, 
                subgraph_id = "5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV", 
-               api_key = "3a2f2d6ce1672801c3a044139373a287", 
-               deployment_network = "arbitrum")
+               api_key = "3a2f2d6ce1672801c3a044139373a287")
 
 }
