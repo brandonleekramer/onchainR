@@ -68,8 +68,18 @@ my_api_key = graph_api_key
 
 query_subgraph(graphql_query = uniswap_query,
                subgraph_id = uniswapv3_subgraph,
-               api_key = my_api_key,
-               deployment_network = "arbitrum")
+               api_key = my_api_key)
+```
+
+- **Example:** In a second example, we use the [Chainlink Prices subgraph](https://thegraph.com/explorer/subgraphs/4RTrnxLZ4H8EBdpAQTcVc7LQY9kk85WNLyVzg5iXFQCH?view=Playground&chain=arbitrum-one). As the name suggests, this subgraph grabs prices from the Chainlink price oracle, so you can plug in an asset to find its price relative to USD. For more custom<br> 
+
+```{r token_price}
+current_prices = bind_rows(
+  c(token = "BTC", current_price = getCryptoPrice("BTC", graph_api_key)),
+  c(token = "ETH", current_price = getCryptoPrice("ETH", graph_api_key)),
+  c(token = "SOL", current_price = getCryptoPrice("SOL", graph_api_key))
+)
+current_prices
 ```
 
 ## Blockchain Explorer Example
@@ -82,10 +92,18 @@ my_wallet_list = c("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
                    "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3")
 
 ether_balances = bind_rows(
-  explorerBalances(my_wallet_list, "etherscan", etherscan_api_key) %>% mutate(chain = "Ethereum"),
-  explorerBalances(my_wallet_list, "arbiscan", arbiscan_api_key) %>% mutate(chain = "Arbitrum"),
-  explorerBalances(my_wallet_list, "basescan", arbiscan_api_key) %>% mutate(chain = "Base"),
-  explorerBalances(my_wallet_list, "polygonscan", polygonscan_api_key) %>% mutate(chain = "Polygon")
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "etherscan", 
+                   etherscan_api_key) %>% mutate(chain = "Ethereum"),
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "arbiscan", 
+                   arbiscan_api_key) %>% mutate(chain = "Arbitrum"),
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "basescan", 
+                   basescan_api_key) %>% mutate(chain = "Base"),
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "polygonscan", 
+                   polygonscan_api_key) %>% mutate(chain = "Polygon")
 )
 
 ether_balances

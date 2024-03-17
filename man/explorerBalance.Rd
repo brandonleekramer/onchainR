@@ -22,7 +22,7 @@ Get the balance of the specified address in ETH
 \examples{
 
 explorerBalance(wallet_address = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-                blockchain_explorer = "ethereum",     
+                blockchain_explorer = "etherscan",     
                 api_key = "A79S4QJXS518CS6ZQYFHB5SX5AWE7E952D")
 
 }

@@ -24,7 +24,7 @@ blockchain_wallets = c("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
                        "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3")
 
 explorerBalances(wallet_addresses = blockchain_wallets,
-                 blockchain_explorer = "ethereum",     
+                 blockchain_explorer = "etherscan",     
                  api_key = "A79S4QJXS518CS6ZQYFHB5SX5AWE7E952D")
 
 }
