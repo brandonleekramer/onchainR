@@ -19,17 +19,8 @@ explorerBalances = function(wallet_addresses,
                             blockchain_explorer, 
                             api_key){
   
-  #if (blockchain_explorer == "avalanche"){ explorer_url = "api.avascan.info" }
-  if (blockchain_explorer == "etherscan"){ explorer_url = "api.etherscan.io" } 
-  if (blockchain_explorer == "arbiscan"){ explorer_url = "api.arbiscan.io" }
-  if (blockchain_explorer == "basescan"){ explorer_url = "api.basescan.org" }
-  if (blockchain_explorer == "optimismscan"){ explorer_url = "api-optimistic.etherscan.io" } 
-  if (blockchain_explorer == "polygonscan"){ explorer_url = "api.polygonscan.com" } 
-  if (blockchain_explorer == "scrollscan"){ explorer_url = "api.scrollscan.com" }
-  #else if (print("This blockchain explorer is not yet supported by onchainR."))
-  
+  explorer_url = getExplorerURL(blockchain_explorer)
   wallet_addresses = paste0(wallet_addresses, collapse = ",")
-  
   url = stringr::str_c("https://",explorer_url,"/api",
                        "?module=account",
                        "&action=balancemulti",

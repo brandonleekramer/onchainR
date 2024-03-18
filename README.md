@@ -1,5 +1,5 @@
 
-## onchainR <br><img src="man/figures/onchainR.png" align="right" height="210" />
+## onchainR <br><img src="man/figures/onchainR.png" align="right" height="220" />
 
 <!-- badges: start 
 [![R-CMD-check](https://github.com/brandonleekramer/onchainR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/brandonleekramer/onchainR/actions/workflows/R-CMD-check.yaml)
@@ -12,6 +12,8 @@ badges: end -->
 **Authors:** [Brandon Kramer](https://www.brandonleekramer.com/) \|
 **License:** [MIT](https://opensource.org/licenses/MIT)<br/>
 
+<br>
+
 ## Installation
 
 You can install the development version of onchainR from
@@ -22,11 +24,11 @@ You can install the development version of onchainR from
 # devtools::install_github("brandonleekramer/onchainR")
 ```
 
-## JSON-RPC Example
+## JSON-RPC
 
-- **JSON-RPC:** JSON-RPC APIs are the easiest way to get read data off
-  of a blockchain. These APIs get basic account, balance, and network
-  data. You can learn more about [blockchain JSON-RPC nodes
+- **JSON-RPC:** JSON-RPC APIs are the easiest way to read data off of a
+  blockchain. These APIs get basic account, balance, and network data.
+  You can learn more about [blockchain JSON-RPC nodes
   here](https://www.alchemy.com/overviews/rpc-node).<br>
 - **Example:** In this example, we check how much `vitalik.eth` has in
   their wallet using the `eth_getBalance` function.<br>
@@ -41,6 +43,17 @@ You can install the development version of onchainR from
   account.<br>
 
 ``` r
+library("tidyverse") 
+#> ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+#> ✔ dplyr     1.1.4     ✔ readr     2.1.5
+#> ✔ forcats   1.0.0     ✔ stringr   1.5.1
+#> ✔ ggplot2   3.5.0     ✔ tibble    3.2.1
+#> ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+#> ✔ purrr     1.0.2     
+#> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+#> ✖ dplyr::filter() masks stats::filter()
+#> ✖ dplyr::lag()    masks stats::lag()
+#> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 library("onchainR") 
 
 vitalik_eth = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
@@ -54,7 +67,55 @@ eth_getBalance(wallet_address = vitalik_eth,
 #> [1] 955.6283
 ```
 
-## Subgraph Example
+## Blockchain Explorer
+
+- **Blockchain Explorer:** Blockchain Explorer APIs are ideal for
+  getting balances and historical transaction data for specific wallets.
+  [Etherscan](https://etherscan.io/aboutus) is the industry leader for
+  blockhain explorers and `onchainR`’s starting point for this API. We
+  plan to add support for other providers in the coming months.<br>
+- **Example:** Below, we provide an example on how to use `onchainR` to
+  get ETH balances across two wallets on four different chains:
+  Ethereum, Arbitrum One, Polygon, and Base.<br>
+- **Process:** To carry out this code snippet for your purposes, you
+  will need to visit [Etherscan](https://etherscan.io/),
+  [Arbiscan](https://arbiscan.io/),
+  [Polygonscan](https://polygonscan.com/), and
+  [Basescan](https://basescan.org/) to acquire API keys and then use
+  those keys in the following code snippet.<br>
+
+``` r
+my_wallet_list = c("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+                   "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3")
+
+ether_balances = bind_rows(
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "etherscan", 
+                   etherscan_api_key) %>% mutate(chain = "Ethereum"),
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "arbiscan", 
+                   arbiscan_api_key) %>% mutate(chain = "Arbitrum"),
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "polygonscan", 
+                   polygonscan_api_key) %>% mutate(chain = "Polygon"),
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "basescan", 
+                   basescan_api_key) %>% mutate(chain = "Base")
+)
+
+ether_balances
+#>                                      account      balance currency    chain
+#> 1 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 955.62834491      ETH Ethereum
+#> 2 0x50EC05ADe8280758E2077fcBC08D878D4aef79C3   1.32350685      ETH Ethereum
+#> 3 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045   1.19636885      ETH Arbitrum
+#> 4 0x50EC05ADe8280758E2077fcBC08D878D4aef79C3   1.00531341      ETH Arbitrum
+#> 5 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 447.16134434      ETH  Polygon
+#> 6 0x50EC05ADe8280758E2077fcBC08D878D4aef79C3 879.70136309      ETH  Polygon
+#> 7 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045   0.03519259      ETH     Base
+#> 8 0x50EC05ADe8280758E2077fcBC08D878D4aef79C3   0.01321418      ETH     Base
+```
+
+## Subgraphs
 
 - **Subgraphs:** Subgraphs allow users to query data on smart contracts
   using GraphQL. For example, to query all transactions within a single
@@ -93,7 +154,7 @@ query_subgraph(graphql_query = uniswap_query,
                api_key = my_api_key)
 #> $bundles
 #>                           ethPriceUSD id
-#> 1 3639.079888950450762328918921978811  1
+#> 1 3614.142461688276735704880487859624  1
 ```
 
 - **Example:** In a second example, we use the [Chainlink Prices
@@ -112,45 +173,9 @@ current_prices
 #> # A tibble: 3 × 2
 #>   token current_price
 #>   <chr> <chr>        
-#> 1 BTC   68275.81     
-#> 2 ETH   3634.45781959
-#> 3 SOL   197.5919
-```
-
-## Blockchain Explorer Example
-
-``` r
-library("tidyverse") 
-library("onchainR")
-
-my_wallet_list = c("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-                   "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3")
-
-ether_balances = bind_rows(
-  explorerBalances(my_wallet_list, 
-                   blockchain_explorer = "etherscan", 
-                   etherscan_api_key) %>% mutate(chain = "Ethereum"),
-  explorerBalances(my_wallet_list, 
-                   blockchain_explorer = "arbiscan", 
-                   arbiscan_api_key) %>% mutate(chain = "Arbitrum"),
-  explorerBalances(my_wallet_list, 
-                   blockchain_explorer = "basescan", 
-                   basescan_api_key) %>% mutate(chain = "Base"),
-  explorerBalances(my_wallet_list, 
-                   blockchain_explorer = "polygonscan", 
-                   polygonscan_api_key) %>% mutate(chain = "Polygon")
-)
-
-ether_balances
-#>                                      account      balance currency    chain
-#> 1 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 955.62834491      ETH Ethereum
-#> 2 0x50EC05ADe8280758E2077fcBC08D878D4aef79C3   1.32350685      ETH Ethereum
-#> 3 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045   1.19636885      ETH Arbitrum
-#> 4 0x50EC05ADe8280758E2077fcBC08D878D4aef79C3   1.00531341      ETH Arbitrum
-#> 5 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045   0.03519259      ETH     Base
-#> 6 0x50EC05ADe8280758E2077fcBC08D878D4aef79C3   0.01321418      ETH     Base
-#> 7 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 447.16134434      ETH  Polygon
-#> 8 0x50EC05ADe8280758E2077fcBC08D878D4aef79C3 879.70136309      ETH  Polygon
+#> 1 BTC   67762.99583  
+#> 2 ETH   3610.97      
+#> 3 SOL   201.50249951
 ```
 
 ## Functions, Chains, and Providers

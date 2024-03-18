@@ -9,12 +9,11 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-"
 )
 source("~/Documents/git/secrets.R")
-library("tidyverse") 
 library("notionR") 
 library("DT")
 ```
 
-## onchainR <br><img src="man/figures/onchainR.png" align="right" height="210" />
+## onchainR <br><img src="man/figures/onchainR.png" align="right" height="220" />
 
 <!-- badges: start 
 [![R-CMD-check](https://github.com/brandonleekramer/onchainR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/brandonleekramer/onchainR/actions/workflows/R-CMD-check.yaml)
@@ -27,6 +26,8 @@ badges: end -->
 **Authors:** [Brandon Kramer](https://www.brandonleekramer.com/) | 
 **License:** [MIT](https://opensource.org/licenses/MIT)<br/>
 
+<br>
+
 ## Installation
 
 You can install the development version of onchainR from [GitHub](https://github.com/) with:
@@ -36,13 +37,14 @@ You can install the development version of onchainR from [GitHub](https://github
 # devtools::install_github("brandonleekramer/onchainR")
 ```
 
-## JSON-RPC Example
+## JSON-RPC
 
-- **JSON-RPC:** JSON-RPC APIs are the easiest way to get read data off of a blockchain. These APIs get basic account, balance, and network data. You can learn more about [blockchain JSON-RPC nodes here](https://www.alchemy.com/overviews/rpc-node).<br>
+- **JSON-RPC:** JSON-RPC APIs are the easiest way to read data off of a blockchain. These APIs get basic account, balance, and network data. You can learn more about [blockchain JSON-RPC nodes here](https://www.alchemy.com/overviews/rpc-node).<br>
 - **Example:** In this example, we check how much `vitalik.eth` has in their wallet using the `eth_getBalance` function.<br>
 - **Process:** To do this, you will need to pick a JSON-RPC provider. `onchainR` currently supports [Infura](https://www.infura.io/), [Grove](https://grove.city/), [DRPC](https://drpc.org/), [Quicknode](https://www.quicknode.com/), and [Alchemy](https://www.alchemy.com/), but these functions likely work with dozens of other JSON-RPC providers too. We've tried to design these functions to minimize vendor lock-in. Once you have picked a provider, you'll need to copy an endpoint and API key from within your account.<br>
 
 ```{r json_rpc}
+library("tidyverse") 
 library("onchainR") 
 
 vitalik_eth = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
@@ -55,7 +57,35 @@ eth_getBalance(wallet_address = vitalik_eth,
                return_format = "ETH")
 ```
 
-## Subgraph Example
+## Blockchain Explorer
+
+- **Blockchain Explorer:** Blockchain Explorer APIs are ideal for getting balances and historical transaction data for specific wallets. [Etherscan](https://etherscan.io/aboutus) is the industry leader for blockhain explorers and `onchainR`'s starting point for this API. We plan to add support for other providers in the coming months.<br>
+- **Example:** Below, we provide an example on how to use `onchainR` to get ETH balances across two wallets on four different chains: Ethereum, Arbitrum One, Polygon, and Base.<br>
+- **Process:** To carry out this code snippet for your purposes, you will need to visit [Etherscan](https://etherscan.io/), [Arbiscan](https://arbiscan.io/), [Polygonscan](https://polygonscan.com/), and [Basescan](https://basescan.org/) to acquire API keys and then use those keys in the following code snippet.<br>
+
+```{r blockchain_explorer}
+my_wallet_list = c("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+                   "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3")
+
+ether_balances = bind_rows(
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "etherscan", 
+                   etherscan_api_key) %>% mutate(chain = "Ethereum"),
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "arbiscan", 
+                   arbiscan_api_key) %>% mutate(chain = "Arbitrum"),
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "polygonscan", 
+                   polygonscan_api_key) %>% mutate(chain = "Polygon"),
+  explorerBalances(my_wallet_list, 
+                   blockchain_explorer = "basescan", 
+                   basescan_api_key) %>% mutate(chain = "Base")
+)
+
+ether_balances
+```
+
+## Subgraphs
 
 - **Subgraphs:** Subgraphs allow users to query data on smart contracts using GraphQL. For example, to query all transactions within a single Uniswap v3 liquidity pool over the last 24 hours, Uniswap simply needs to define their schema, index the event data to create the subgraph, and then use the generated GraphQL API to query their subgraph for flexible and efficient blockchain data. With [The Graph](https://thegraph.com/), subgraphs can also be published onchain so *anyone* can use them! Several other blockchain data providers, including Alchemy and Goldsky, allow you to create your own subgraphs. We opted to develop wrapper functions for The Graph specifically because that protocol provides the largest open repository of existing subgraphs to query onchain projects.<br>
 - **Example:** In this example, we use the [Uniswap V3 subgraph](https://thegraph.com/explorer/subgraphs/5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV?v=0&view=Playground&chain=arbitrum-one) on The Graph Network. To search for subgraphs that index other smart contracts, use [Graph Explorer](https://thegraph.com/explorer). [The Graph also has a free hosted service](https://thegraph.com/hosted-service), but it is set to retire in Q2 2024.<br> 
@@ -80,33 +110,6 @@ current_prices = bind_rows(
   c(token = "SOL", current_price = getCryptoPrice("SOL", graph_api_key))
 )
 current_prices
-```
-
-## Blockchain Explorer Example
-
-```{r blockchain_explorer}
-library("tidyverse") 
-library("onchainR")
-
-my_wallet_list = c("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-                   "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3")
-
-ether_balances = bind_rows(
-  explorerBalances(my_wallet_list, 
-                   blockchain_explorer = "etherscan", 
-                   etherscan_api_key) %>% mutate(chain = "Ethereum"),
-  explorerBalances(my_wallet_list, 
-                   blockchain_explorer = "arbiscan", 
-                   arbiscan_api_key) %>% mutate(chain = "Arbitrum"),
-  explorerBalances(my_wallet_list, 
-                   blockchain_explorer = "basescan", 
-                   basescan_api_key) %>% mutate(chain = "Base"),
-  explorerBalances(my_wallet_list, 
-                   blockchain_explorer = "polygonscan", 
-                   polygonscan_api_key) %>% mutate(chain = "Polygon")
-)
-
-ether_balances
 ```
 
 ## Functions, Chains, and Providers
