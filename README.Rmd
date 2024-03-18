@@ -43,7 +43,7 @@ You can install the development version of onchainR from [GitHub](https://github
 - **Example:** In this example, we check how much `vitalik.eth` has in their wallet using the `eth_getBalance` function.<br>
 - **Process:** To do this, you will need to pick a JSON-RPC provider. `onchainR` currently supports [Infura](https://www.infura.io/), [Grove](https://grove.city/), [DRPC](https://drpc.org/), [Quicknode](https://www.quicknode.com/), and [Alchemy](https://www.alchemy.com/), but these functions likely work with dozens of other JSON-RPC providers too. We've tried to design these functions to minimize vendor lock-in. Once you have picked a provider, you'll need to copy an endpoint and API key from within your account.<br>
 
-```{r json_rpc}
+```{r json_rpc, warning=FALSE, message=FALSE}
 library("tidyverse") 
 library("onchainR") 
 
@@ -63,7 +63,7 @@ eth_getBalance(wallet_address = vitalik_eth,
 - **Example:** Below, we provide an example on how to use `onchainR` to get ETH balances across two wallets on four different chains: Ethereum, Arbitrum One, Polygon, and Base.<br>
 - **Process:** To carry out this code snippet for your purposes, you will need to visit [Etherscan](https://etherscan.io/), [Arbiscan](https://arbiscan.io/), [Polygonscan](https://polygonscan.com/), and [Basescan](https://basescan.org/) to acquire API keys and then use those keys in the following code snippet.<br>
 
-```{r blockchain_explorer}
+```{r blockchain_explorer, warning=FALSE, message=FALSE}
 my_wallet_list = c("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
                    "0x50EC05ADe8280758E2077fcBC08D878D4aef79C3")
 
@@ -91,7 +91,7 @@ ether_balances
 - **Example:** In this example, we use the [Uniswap V3 subgraph](https://thegraph.com/explorer/subgraphs/5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV?v=0&view=Playground&chain=arbitrum-one) on The Graph Network. To search for subgraphs that index other smart contracts, use [Graph Explorer](https://thegraph.com/explorer). The Graph also has a [free hosted service](https://thegraph.com/hosted-service), but it is set to retire in Q2 2024.<br> 
 - **Process:** We develop a GraphQL query under the `Playground` tab, copy the `Subgraph ID` from the top of the page, and copy both into our R code. Next, we go to [Subgraph Studio](https://thegraph.com/studio/apikeys/) to get an API key. Note that this subgraph is deployed on The Graph on Arbitrum, which you check by validating the Network Switcher in the top-right corner of the page.<br>  
 
-```{r subgraph}
+```{r subgraph, warning=FALSE, message=FALSE}
 uniswap_query = "{ bundles(first: 5) { id ethPriceUSD } }"
 uniswapv3_subgraph = "5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV"
 my_api_key = graph_api_key
@@ -103,7 +103,7 @@ query_subgraph(graphql_query = uniswap_query,
 
 - **Example:** In a second example, we use the [Chainlink Prices subgraph](https://thegraph.com/explorer/subgraphs/4RTrnxLZ4H8EBdpAQTcVc7LQY9kk85WNLyVzg5iXFQCH?view=Playground&chain=arbitrum-one). As the name suggests, this subgraph grabs prices from the Chainlink price oracle, so you can plug in an asset to find its price relative to USD. For more custom<br> 
 
-```{r token_price}
+```{r token_price, warning=FALSE, message=FALSE}
 current_prices = bind_rows(
   c(token = "BTC", current_price = getCryptoPrice("BTC", graph_api_key)),
   c(token = "ETH", current_price = getCryptoPrice("ETH", graph_api_key)),

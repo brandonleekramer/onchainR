@@ -44,16 +44,6 @@ You can install the development version of onchainR from
 
 ``` r
 library("tidyverse") 
-#> ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-#> ✔ dplyr     1.1.4     ✔ readr     2.1.5
-#> ✔ forcats   1.0.0     ✔ stringr   1.5.1
-#> ✔ ggplot2   3.5.0     ✔ tibble    3.2.1
-#> ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-#> ✔ purrr     1.0.2     
-#> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-#> ✖ dplyr::filter() masks stats::filter()
-#> ✖ dplyr::lag()    masks stats::lag()
-#> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 library("onchainR") 
 
 vitalik_eth = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
@@ -153,8 +143,8 @@ query_subgraph(graphql_query = uniswap_query,
                subgraph_id = uniswapv3_subgraph,
                api_key = my_api_key)
 #> $bundles
-#>                           ethPriceUSD id
-#> 1 3614.142461688276735704880487859624  1
+#>                          ethPriceUSD id
+#> 1 3585.36345061335950426213087235299  1
 ```
 
 - **Example:** In a second example, we use the [Chainlink Prices
@@ -173,9 +163,9 @@ current_prices
 #> # A tibble: 3 × 2
 #>   token current_price
 #>   <chr> <chr>        
-#> 1 BTC   67762.99583  
-#> 2 ETH   3610.97      
-#> 3 SOL   201.50249951
+#> 1 BTC   67354.89     
+#> 2 ETH   3588.8765803 
+#> 3 SOL   197.4402
 ```
 
 ## Functions, Chains, and Providers
