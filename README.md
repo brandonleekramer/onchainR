@@ -132,8 +132,8 @@ ether_balances
 - **Example:** In this example, we use the [Uniswap V3
   subgraph](https://thegraph.com/explorer/subgraphs/5zvR82QoaXYFyDEKLZ9t6v9adgnptxYpKpSbxtgVENFV?v=0&view=Playground&chain=arbitrum-one)
   on The Graph Network. To search for subgraphs that index other smart
-  contracts, use [Graph Explorer](https://thegraph.com/explorer). [The
-  Graph also has a free hosted
+  contracts, use [Graph Explorer](https://thegraph.com/explorer). The
+  Graph also has a [free hosted
   service](https://thegraph.com/hosted-service), but it is set to retire
   in Q2 2024.<br>
 - **Process:** We develop a GraphQL query under the `Playground` tab,
